@@ -1,0 +1,7 @@
+# username[:ssh_pubkey]
+# Lines starting with # are ignored
+
+alice:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFakeKeyForExampleOnly alice@example
+bob:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCExampleKeyOnlyPleaseReplace bob@example
+carol
+
