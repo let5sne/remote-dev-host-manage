@@ -88,7 +88,7 @@ create_user() {
 set_home_mode() {
   local user="$1"; local mode="$2"
   local home
-  home=$(getent passwd "$user" | cut -d: -f6)
+  home=$(getent passwd "$user" | cut -d: -f6 || true)
   if [[ -z "$home" || ! -d "$home" ]]; then
     echo "[WARN] Home not found for $user"
     return 0
@@ -103,7 +103,7 @@ ensure_ssh_key() {
     echo "[SSH] No key provided for $user (password login remains disabled)"
     return 0
   fi
-  local home; home=$(getent passwd "$user" | cut -d: -f6)
+  local home; home=$(getent passwd "$user" | cut -d: -f6 || true)
   local sshd="$home/.ssh"
   echo "[SSH] Installing authorized_keys for $user"
   if $DRY_RUN; then
@@ -125,7 +125,7 @@ disable_password_login() {
 
 suggest_umask_note() {
   local user="$1"; local um="$2"
-  local home; home=$(getent passwd "$user" | cut -d: -f6)
+  local home; home=$(getent passwd "$user" | cut -d: -f6 || true)
   local note="$home/.profile"
   echo "[NOTE] Suggesting umask $um in $note (commented)"
   if $DRY_RUN; then
@@ -169,4 +169,3 @@ done < "$file"
 
 echo "[DONE] Processed users from $file"
 echo "[INFO] Verify: id USER | getent passwd USER | ls -ld ~USER"
-
