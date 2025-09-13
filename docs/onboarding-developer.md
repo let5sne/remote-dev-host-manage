@@ -16,13 +16,26 @@ Windows：使用 PowerShell（OpenSSH）或 Git Bash 执行同上命令。
 将公钥（`.pub` 内容）发送给管理员，不要发送私钥。
 
 ## 2. 配置 SSH 连接
-在本地 `~/.ssh/config` 添加条目（管理员会提供 HostName 与用户名）：
+在本地 `~/.ssh/config` 添加条目（管理员会提供 HostName、端口与用户名）：
 ```sshconfig
 Host dev-host
   HostName your.server.ip
+  Port 22                # 如管理员将 SSH 改为 2222，请同步修改为 2222
   User <你的用户名>
   IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes     # 仅使用上面的密钥，避免“Too many authentication failures”
+  ServerAliveInterval 30 # 30 秒保活，弱网更稳
+  ServerAliveCountMax 3
+  Compression yes        # 弱网下略降延迟
+  ControlMaster auto     # 复用 SSH 连接，VS Code Remote 更流畅
+  ControlPersist 5m
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  # StrictHostKeyChecking ask  # 首次连接提示确认主机指纹（更安全可开启）
 ```
+
+说明：
+- 若服务器端口不是 22，需要在 `Port` 中同步设置。
+- `IdentitiesOnly yes` 可避免因 ssh-agent 挂载了很多密钥而连接失败。
 
 测试连接：
 ```bash
@@ -69,9 +82,13 @@ ssh -L 3000:localhost:3000 dev-host
 # 在远端跑服务后，本地浏览器访问 http://localhost:3000
 ```
 
+如果服务端口不是本机访问端口，可按需修改左边的本地端口或添加多个映射，如：
+```bash
+ssh -L 5173:localhost:5173 -L 9229:localhost:9229 dev-host
+```
+
 ## 7. 协作规范
 - 仅在分配的项目目录（如 `/srv/projects/<project>`）内共享与提交代码
 - 私钥严禁外发；如需在多台开发机使用，可将公钥逐台添加到远端账户
 - 如需访问新项目目录，联系管理员将你加入对应项目组
 - 非必要不使用 sudo；语言与工具尽量用用户态管理器（nvm/pyenv/asdf）
-
