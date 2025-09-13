@@ -25,7 +25,7 @@ apply:
 verify:
 	@set -e; \
 	if [ ! -f "$(USERS_FILE)" ]; then echo "Missing $(USERS_FILE)"; exit 1; fi; \
-	awk -F: 'NF && $${1}!~/^\s*#/ {print $${1}}' "$(USERS_FILE)" | while read -r u; do \
+	awk -F: 'NF && $$0 !~ /^[[:space:]]*#/ { print $$1 }' "$(USERS_FILE)" | while read -r u; do \
 	  [ -z "$$u" ] && continue; \
 	  echo "--- $$u"; \
 	  id $$u 2>/dev/null || echo "[WARN] user not found: $$u"; \
@@ -68,3 +68,4 @@ mk-workspace:
 assign-group:
 	@if [ -z "$(GROUP)" ] || [ -z "$(USERS)" ]; then echo "Usage: make assign-group GROUP=proj-alpha USERS=alice,bob"; exit 2; fi
 	@IFS=,; for u in $(USERS); do echo "[ADD] $$u -> $(GROUP)"; sudo usermod -aG "$(GROUP)" "$$u"; done
+
