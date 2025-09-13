@@ -5,6 +5,11 @@
 - `create_devs_ubuntu.sh`：在 Ubuntu 上批量创建开发者用户，默认禁用密码、配置 SSH、公私目录权限。
 - `users.sample.txt`：示例用户清单格式。
 
+## 文档
+
+- 管理员入职流程：`docs/onboarding-admin.md`
+- 开发者入职指南：`docs/onboarding-developer.md`
+
 ## 快速开始
 
 1) 准备用户清单（每行 `username[:ssh_pubkey]`）
