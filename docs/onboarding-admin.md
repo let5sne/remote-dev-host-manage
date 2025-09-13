@@ -38,7 +38,23 @@ ls -ld ~alice
 ```
 
 ## 4. 分配项目组与共享目录
-为项目创建组、把用户加入，并创建共享工作区：
+作用与意义（为什么要做）：
+- 权限边界清晰：按项目建 Unix 组授予访问权，避免放宽全局权限或互相加入私有组。
+- 协作效率：统一工作路径 `/srv/projects/<project>`，共享构建产物/数据/脚手架更顺畅。
+- 一致继承：setgid +（可选）默认 ACL 确保新建文件自动归属项目组、组可读写。
+- 运维友好：按项目维度做备份、配额、归档；增删成员只调组成员即可。
+- 安全可审计：目录属主 `root:<group>`，单账号被攻破也不易“独占”项目目录。
+
+何时需要 / 可跳过：
+- 需要：多人在同一台主机协作同一/多个项目，需要共享构建工件、数据集或缓存。
+- 可跳过：单人主机或协作完全依赖 GitHub/CI，不在同机共享任何文件。
+
+最小落地（即使没有 ACL 也可）：
+- 新建项目组，并将成员加入。
+- 建目录 `/srv/projects/<project>`，属主 `root:<group>`，权限 `2770`（带 setgid）。
+- 可选防误删：对“公共投放区”或需要限制互删的目录使用 sticky 位（`STICKY=1` 或 `chmod 12770`）。
+
+使用本仓库命令为项目创建组、把用户加入，并创建共享工作区：
 ```bash
 PROJECT=alpha
 make mk-group GROUP=proj-$PROJECT USERS=$USER
@@ -119,7 +135,7 @@ make assign-group GROUP=proj-alpha USERS=bob
 ```
 - 新增项目空间：
 ```bash
-make mk-workspace GROUP=proj-beta PATH=/srv/projects/beta MODE=2770
+make mk-workspace GROUP=proj-beta WORKSPACE=/srv/projects/beta MODE=2770
 ```
 
 ## 8. 离职/禁用
