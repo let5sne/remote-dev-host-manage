@@ -12,9 +12,9 @@ help:
 	@echo "  make ssh-harden    # 禁用口令登录并重载 sshd (谨慎)"
 	@echo "  make set-dir-mode  # 将 /etc/adduser.conf 的 DIR_MODE 设为 0750"
 	@echo "  make set-umask     # 在 /etc/profile.d/umask_dev.sh 设定 umask 027"
- 	@echo "  make mk-group       # 创建组并把用户加入 (GROUP, USERS)"
- 	@echo "  make mk-workspace   # 创建共享目录 (PATH, GROUP, MODE, STICKY)"
- 	@echo "  make assign-group   # 将 USERS 加入 GROUP"
+	@echo "  make mk-group       # 创建组并把用户加入 (GROUP, USERS)"
+	@echo "  make mk-workspace   # 创建共享目录 (WORKSPACE, GROUP, MODE, STICKY)"
+	@echo "  make assign-group   # 将 USERS 加入 GROUP"
 
 dry-run:
 	sudo bash ./create_devs_ubuntu.sh -f $(USERS_FILE) --home-mode $(HOME_MODE) --umask $(UMASK) --dry-run
@@ -50,7 +50,7 @@ set-umask:
 # Directory and group helpers
 GROUP ?=
 USERS ?=
-PATH ?=
+WORKSPACE ?=
 MODE ?= 2770
 STICKY ?= 0
 
@@ -61,9 +61,9 @@ mk-group:
 	@if [ -n "$(USERS)" ]; then IFS=,; for u in $(USERS); do echo "[ADD] $$u -> $(GROUP)"; sudo usermod -aG "$(GROUP)" "$$u" || true; done; fi
 
 mk-workspace:
-	@if [ -z "$(GROUP)" ] || [ -z "$(PATH)" ]; then echo "Usage: make mk-workspace GROUP=proj-alpha PATH=/srv/projects/alpha [MODE=2770] [STICKY=1]"; exit 2; fi
+	@if [ -z "$(GROUP)" ] || [ -z "$(WORKSPACE)" ]; then echo "Usage: make mk-workspace GROUP=proj-alpha WORKSPACE=/srv/projects/alpha [MODE=2770] [STICKY=1]"; exit 2; fi
 	@if [ "$(STICKY)" = "1" ]; then SFLAG=--sticky; else SFLAG=; fi; \
-	sudo bash ./setup_dirs_ubuntu.sh --group "$(GROUP)" --path "$(PATH)" --mode "$(MODE)" $$SFLAG
+		sudo bash ./setup_dirs_ubuntu.sh --group "$(GROUP)" --path "$(WORKSPACE)" --mode "$(MODE)" $$SFLAG
 
 assign-group:
 	@if [ -z "$(GROUP)" ] || [ -z "$(USERS)" ]; then echo "Usage: make assign-group GROUP=proj-alpha USERS=alice,bob"; exit 2; fi

@@ -61,7 +61,7 @@ USERS_FILE=users.txt ./provision.sh
 - `make set-dir-mode`：将 `/etc/adduser.conf` 的 `DIR_MODE` 设为 `0750`（影响今后新用户）。
 - `make set-umask`：在 `/etc/profile.d/umask_dev.sh` 设定 `umask 027`（对新会话生效）。
 - `make mk-group`：创建组并把用户加入（需传 `GROUP`、可选 `USERS`）。
-- `make mk-workspace`：创建共享目录并设置继承与 ACL（需传 `GROUP`、`PATH`，可选 `MODE`、`STICKY`）。
+- `make mk-workspace`：创建共享目录并设置继承与 ACL（需传 `GROUP`、`WORKSPACE`，可选 `MODE`、`STICKY`）。
 - `make assign-group`：将 `USERS` 批量加入 `GROUP`。
 
 可用变量（覆盖默认）：
@@ -107,5 +107,5 @@ sudo setfacl -R -m d:g:proj-alpha:rwx /srv/projects/alpha
 # 建组并加人
 make mk-group GROUP=proj-alpha USERS=alice,bob
 # 建工作区（可选 STICKY=1）
-make mk-workspace GROUP=proj-alpha PATH=/srv/projects/alpha MODE=2770 STICKY=0
+make mk-workspace GROUP=proj-alpha WORKSPACE=/srv/projects/alpha MODE=2770 STICKY=0
 ```

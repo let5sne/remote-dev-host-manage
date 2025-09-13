@@ -36,7 +36,7 @@ ls -ld ~alice
 ```bash
 PROJECT=alpha
 make mk-group GROUP=proj-$PROJECT USERS=$USER
-make mk-workspace GROUP=proj-$PROJECT PATH=/srv/projects/$PROJECT MODE=2770 STICKY=0
+make mk-workspace GROUP=proj-$PROJECT WORKSPACE=/srv/projects/$PROJECT MODE=2770 STICKY=0
 ```
 
 验证写权限：
@@ -83,4 +83,3 @@ userdel -r alice                         # 删除用户与家目录（谨慎）
 - 无法写项目目录：检查是否在组内 `id alice`，目录属组/权限 `ls -ld /srv/projects/alpha`
 - SSH 仍提示口令：确认公钥写入 `~alice/.ssh/authorized_keys` 且权限 600/700
 - 口令登录被禁用：如已 `ssh-harden`，需确保公钥正常后再执行该步骤
-

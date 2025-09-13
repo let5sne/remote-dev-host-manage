@@ -1,0 +1,5 @@
+# username[:ssh_pubkey]
+# Lines starting with # are ignored
+
+xuanjian:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBRlEZRxpXjUTnIMfnZtFddPSaUHowDax2Y+VFwzSElu id_key_sg_test
+
