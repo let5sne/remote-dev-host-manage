@@ -1,4 +1,4 @@
-.PHONY: help dry-run apply verify ssh-harden set-dir-mode set-umask mk-group mk-workspace assign-group
+.PHONY: help deps dry-run apply verify ssh-harden set-dir-mode set-umask mk-group mk-workspace assign-group
 
 USERS_FILE ?= users.txt
 HOME_MODE ?= 750
@@ -6,6 +6,7 @@ UMASK ?= 027
 
 help:
 	@echo "Targets:"
+	@echo "  make deps          # 安装依赖（acl: setfacl）"
 	@echo "  make dry-run       # 演练创建（不落盘）"
 	@echo "  make apply         # 批量创建并配置用户"
 	@echo "  make verify        # 检查用户与家目录权限"
@@ -68,4 +69,10 @@ mk-workspace:
 assign-group:
 	@if [ -z "$(GROUP)" ] || [ -z "$(USERS)" ]; then echo "Usage: make assign-group GROUP=proj-alpha USERS=alice,bob"; exit 2; fi
 	@IFS=,; for u in $(USERS); do echo "[ADD] $$u -> $(GROUP)"; sudo usermod -aG "$(GROUP)" "$$u"; done
+deps:
+	@if command -v apt-get >/dev/null 2>&1; then \
+		sudo apt-get update && sudo apt-get install -y acl; \
+	else \
+		echo "Please install 'acl' package manually (setfacl required)."; \
+	fi
 

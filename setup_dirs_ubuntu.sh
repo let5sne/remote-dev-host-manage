@@ -86,10 +86,13 @@ fi
 
 run install -d -m "$RUN_MODE" -o root -g "$GROUP" "$PATH_DIR"
 
-# Ensure group rwx via ACLs and defaults for new files/dirs
-run setfacl -R -m g:"$GROUP":rwx "$PATH_DIR"
-run setfacl -R -m d:g:"$GROUP":rwx "$PATH_DIR"
+# Ensure group rwx via ACLs and defaults for new files/dirs (if setfacl available)
+if command -v setfacl >/dev/null 2>&1; then
+  run setfacl -R -m g:"$GROUP":rwx "$PATH_DIR"
+  run setfacl -R -m d:g:"$GROUP":rwx "$PATH_DIR"
+else
+  echo "[WARN] 'setfacl' not found; install package 'acl' or run 'make deps'. Skipping ACL defaults."
+fi
 
 echo "[DONE] $PATH_DIR owned by :$GROUP with mode $RUN_MODE"
 echo "[TIP] New files will inherit group via setgid; ACL default ensures group rwx."
-

@@ -12,6 +12,12 @@
 
 ## 快速开始
 
+0) 安装依赖（用于设置共享目录 ACL）
+
+```
+make deps
+```
+
 1) 准备用户清单（每行 `username[:ssh_pubkey]`）
 
 ```
@@ -54,6 +60,7 @@ USERS_FILE=users.txt ./provision.sh
 
 ## Makefile 目标
 
+- `make deps`：安装 `acl`（提供 `setfacl`），用于共享目录 ACL 设置。
 - `make dry-run`：演练创建（不落盘）。
 - `make apply`：批量创建并配置用户。
 - `make verify`：检查用户是否存在与家目录权限。
